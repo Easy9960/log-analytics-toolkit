@@ -70,19 +70,6 @@ log-analytics-toolkit/
 
 ### `analyze_errors.sh`
 
-```bash
-#!/bin/bash
-
-LOG_FILE="../logs/app.log"
-
-echo "===== ERROR SUMMARY ====="
-grep "ERROR" $LOG_FILE | awk '{print $2}' | sort | uniq -c | sort -nr
-
-echo ""
-echo "Total ERROR count:"
-grep -c "ERROR" $LOG_FILE
-```
-
 ✅ Demonstrates:
 
 * Pattern matching
@@ -97,15 +84,6 @@ Detect IPs with more than 5 failed logins (401 errors).
 
 ### `detect_bruteforce.sh`
 
-```bash
-#!/bin/bash
-
-LOG_FILE="../logs/nginx.log"
-
-echo "===== Brute Force Detection ====="
-
-grep ' 401 ' $LOG_FILE | awk '{print $1}' | sort | uniq -c | awk '$1 > 5'
-```
 
 Industry relevance:
 
@@ -121,19 +99,6 @@ Assuming response time is last field in nginx log.
 
 ### `latency_report.sh`
 
-```bash
-#!/bin/bash
-
-LOG_FILE="../logs/nginx.log"
-
-echo "===== Latency Report ====="
-
-awk '{sum += $NF; count++} END { 
-    if(count > 0) 
-        print "Average Response Time:", sum/count, "seconds"
-}' $LOG_FILE
-```
-
 This shows:
 
 * Real metrics extraction
@@ -146,56 +111,11 @@ This shows:
 
 ### `summary_dashboard.sh`
 
-```bash
-#!/bin/bash
-
-REPORT="../reports/daily_report.txt"
-
-echo "Generating Daily Report..."
-
-{
-echo "===== DAILY LOG SUMMARY ====="
-date
-echo ""
-
-echo "Total App Errors:"
-grep -c "ERROR" ../logs/app.log
-echo ""
-
-echo "Top 3 Error Times:"
-grep "ERROR" ../logs/app.log | awk '{print $2}' | sort | uniq -c | sort -nr | head -3
-echo ""
-
-echo "Suspicious IPs:"
-grep ' 401 ' ../logs/nginx.log | awk '{print $1}' | sort | uniq -c | awk '$1 > 5'
-echo ""
-
-echo "Average Latency:"
-awk '{sum += $NF; count++} END { if(count > 0) print sum/count }' ../logs/nginx.log
-
-} > $REPORT
-
-echo "Report generated at $REPORT"
-```
-
 Now you look like you built a mini monitoring pipeline.
 
 ---
 
 # 🔄 Step 5: Full Pipeline Runner
-
-### `run_pipeline.sh`
-
-```bash
-#!/bin/bash
-
-cd scripts
-
-./analyze_errors.sh
-./detect_bruteforce.sh
-./latency_report.sh
-./summary_dashboard.sh
-```
 
 ---
 
